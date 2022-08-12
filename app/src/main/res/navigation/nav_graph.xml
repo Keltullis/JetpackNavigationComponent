@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/rootFragment"
         android:name="com.bignerdranch.android.navigationcomponent.RootFragment"
-        android:label="fragment_root"
+        android:label="Root"
         tools:layout="@layout/fragment_root" >
         <action
             android:id="@+id/action_rootFragment_to_boxFragment"
@@ -18,17 +18,24 @@
     <fragment
         android:id="@+id/boxFragment"
         android:name="com.bignerdranch.android.navigationcomponent.BoxFragment"
-        android:label="fragment_box"
+        android:label="{colorName} Box"
         tools:layout="@layout/fragment_box" >
         <action
             android:id="@+id/action_boxFragment_to_secretFragment"
             app:destination="@id/secretFragment" />
+        <!-- подставляем аргумент в лэйбл -->
+        <argument
+            android:name="colorName"
+            app:argType="string" />
+        <argument
+            android:name="color"
+            app:argType="integer" />
     </fragment>
 
     <fragment
         android:id="@+id/secretFragment"
         android:name="com.bignerdranch.android.navigationcomponent.SecretFragment"
-        android:label="fragment_secret"
+        android:label="Secret"
         tools:layout="@layout/fragment_secret" />
 
 </navigation>

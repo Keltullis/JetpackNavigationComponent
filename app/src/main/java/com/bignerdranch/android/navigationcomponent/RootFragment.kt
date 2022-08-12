@@ -17,26 +17,46 @@ class RootFragment:Fragment(R.layout.fragment_root) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentRootBinding.bind(view)
         binding.openYellowBoxButton.setOnClickListener {
-            openBox(Color.rgb(255,255,200))
+            openBox(Color.rgb(255,255,200),getString(R.string.yellow))
         }
         binding.openGreenBoxButton.setOnClickListener {
-            openBox(Color.rgb(200,255,200))
+            openBox(Color.rgb(200,255,200),"Green")
         }
 
         // Принимаем возвращённое число из другого фрагмента силами Navigation Component
-        //findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Int>(BoxFragment.EXTRA_RANDOM_NUMBER)?.observe(viewLifecycleOwner){
-            //Toast.makeText(requireContext(), "Generated number: $it", Toast.LENGTH_SHORT).show()
+        val liveData = findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Int>(BoxFragment.EXTRA_RANDOM_NUMBER)
+        liveData?.observe(viewLifecycleOwner){randomNumber ->
+            if(randomNumber!=null){
+                Toast.makeText(
+                    requireContext(),
+                    "Generated number: $randomNumber",
+                    Toast.LENGTH_SHORT
+                ).show()
+                liveData.value = null
+            }
+        }
+
+        // Было
+        //findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Int>(BoxFragment.EXTRA_RANDOM_NUMBER)?.observe(viewLifecycleOwner){randomNumber ->
+        //          Toast.makeText(requireContext(), "Generated number: $randomNumber", Toast.LENGTH_SHORT).show()
         //}
 
-        parentFragmentManager.setFragmentResultListener(BoxFragment.REQUEST_CODE,viewLifecycleOwner){ _, data ->
-            val number = data.getInt(BoxFragment.EXTRA_RANDOM_NUMBER)
-            Toast.makeText(requireContext(), "Generated number: $number", Toast.LENGTH_SHORT).show()
-        }
+        // Принимаем возвращённое число из другого фрагмента силами Fragment Result Api
+        //parentFragmentManager.setFragmentResultListener(BoxFragment.REQUEST_CODE,viewLifecycleOwner){ _, data ->
+            //val number = data.getInt(BoxFragment.EXTRA_RANDOM_NUMBER)
+            //Toast.makeText(requireContext(), "Generated number: $number", Toast.LENGTH_SHORT).show()
+        //}
     }
 
 
-    private fun openBox(color:Int){
+    private fun openBox(color:Int,colorName:String){
+
+        val direction = RootFragmentDirections.actionRootFragmentToBoxFragment(colorName,color)
+
         // Так осуществляется запуск следующего экрана с помощью Navigation component
-        findNavController().navigate(R.id.action_rootFragment_to_boxFragment, bundleOf(BoxFragment.ARG_COLOR to color))
+        // и отправка данных через дирэкшен
+        findNavController().navigate(direction)
+        // Так было
+        //findNavController().navigate(R.id.action_rootFragment_to_boxFragment, bundleOf(BoxFragment.ARG_COLOR to color,BoxFragment.ARG_COLOR_NAME to colorName))
     }
 }
